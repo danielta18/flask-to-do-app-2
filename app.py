@@ -19,7 +19,8 @@ class Task(db.Model):
 @app.route('/')
 def home():
     tasks = Task.query.all()
-    return render_template('index.html', tasks=tasks)
+    uncompleted_tasks_count = sum(1 for task in tasks if not task.completed)
+    return render_template('index.html', tasks=tasks, uncompleted_tasks_count=uncompleted_tasks_count)
 
 @app.route('/uncompleted')
 def uncompleted_tasks():
@@ -54,4 +55,3 @@ if __name__ == '__main__':
         db.create_all()
     app.run(debug=True)
     
-
