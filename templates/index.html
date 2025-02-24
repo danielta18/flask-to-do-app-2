@@ -13,18 +13,11 @@
                 window.location.href = "/delete/" + taskId;
             }
         }
-        function toggleEditForm(taskId) {
-            var editForm = document.getElementById('edit-form-' + taskId);
-            if (editForm.style.display === 'none') {
-                editForm.style.display = 'inline';
-            } else {
-                editForm.style.display = 'none';
-            }
-        }
     </script>
 </head>
 <body>
     <h1>My To-Do List</h1>
+    <p>Uncompleted Tasks: {{ uncompleted_tasks_count }}</p>
     <form action="/add" method="post">
         <input type="text" name="task" placeholder="Enter a task" required>
         <button type="submit">Add Task</button>
@@ -33,10 +26,10 @@
     <button onclick="window.location.href='/'">Show All Tasks</button>
     <ul>
         {% for task in tasks %}
-            <li>
+            <li class="{% if task.completed %}completed{% endif %}">
                 {{ task['title'] }} 
                 <a href="javascript:void(0);" onclick="confirmDelete({{ task['id'] }})">❌</a>
-                <a href="javascript:void(0);" onclick="toggleEditForm({{ task['id'] }})">✏️</a>
+                <a href="/edit/{{ task['id'] }}">✏️</a>
                 <a href="/complete/{{ task['id'] }}">✔️</a>
                 <form id="edit-form-{{ task['id'] }}" action="/edit/{{ task['id'] }}" method="post" style="display:none; margin-top: 10px;">
                     <input type="text" name="task" placeholder="Edit task" required>

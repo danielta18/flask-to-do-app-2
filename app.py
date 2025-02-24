@@ -19,7 +19,8 @@ class Task(db.Model):
 @app.route('/')
 def home():
     tasks = Task.query.all()
-    return render_template('index.html', tasks=tasks)
+    uncompleted_tasks_count = sum(1 for task in tasks if not task.completed)
+    return render_template('index.html', tasks=tasks, uncompleted_tasks_count=uncompleted_tasks_count)
 
 @app.route('/uncompleted')
 def uncompleted_tasks():
@@ -48,10 +49,19 @@ def complete_task(task_id):
     db.session.commit()
     return redirect('/')
 
+@app.route('/edit/<int:task_id>', methods=['GET', 'POST'])
+def edit_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    if request.method == 'POST':
+        new_title = request.form['title']
+        task.title = new_title
+        db.session.commit()
+        return redirect('/')
+    return render_template('edit.html', task=task)
+
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
     
-
